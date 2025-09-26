@@ -353,7 +353,7 @@
                 document.getElementById('attacks-input-container').innerHTML = '';
                 document.getElementById('abilities-input-container').innerHTML = '';
                 addAttackInput();
-                addAbilityInput();
+                for (let i = 0; i < 4; i++) { addAbilityInput(); }
             };
             
             const populateCreationForm = (monsterData) => {
@@ -372,8 +372,16 @@
                 });
                 document.getElementById('attacks-input-container').innerHTML = '';
                 (monsterData.attacks || []).forEach(addAttackInput);
+                
                 document.getElementById('abilities-input-container').innerHTML = '';
-                (monsterData.abilities || []).forEach(addAbilityInput);
+                const existingAbilities = monsterData.abilities || [];
+                existingAbilities.forEach(addAbilityInput);
+                const abilitiesToPad = 4 - existingAbilities.length;
+                if (abilitiesToPad > 0) {
+                    for (let i = 0; i < abilitiesToPad; i++) {
+                        addAbilityInput();
+                    }
+                }
             };
 
             monsterSelect.addEventListener('change', (e) => {
