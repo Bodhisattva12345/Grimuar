@@ -14,8 +14,8 @@
         .font-playfair { font-family: 'Playfair Display', serif; }
         .monster-name-style { text-shadow: 1px 1px 2px rgba(0,0,0,0.5); cursor: pointer; }
         .card { transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out, opacity 0.3s ease-in-out; position: relative; }
-        .defeated .card-content { 
-            filter: grayscale(100%); 
+        .defeated .card-content {
+            filter: grayscale(100%);
             opacity: 0.6;
             transition: all 0.3s ease-in-out;
         }
@@ -37,37 +37,34 @@
         }
         .color-palette { position: absolute; display: none; grid-template-columns: repeat(4, 1fr); gap: 4px; background-color: #E0DACE; border: 2px solid #3D352E; padding: 4px; border-radius: 6px; z-index: 10; right: 28px; top: 28px; }
         .color-swatch { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 1px solid #3D352E; }
-        .debuff-button {
-            background-color: #6B7280;
-            color: white;
-            font-size: 8px;
-            font-weight: bold;
-            padding: 1px 5px;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            opacity: 0.3;
-        }
-        .debuff-button.active {
-            background-color: #C53030;
-            box-shadow: 0 0 8px #C53030;
-            opacity: 1;
-        }
-        .debuff-list { list-style: none; padding: 4px; margin: 0; background: #c9c1b4; border-radius: 4px; }
-        #debuff-modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.6); display: none;
-            justify-content: center; align-items: center; z-index: 50;
-        }
-        #debuff-modal {
-            background-color: #E0DACE; padding: 20px; border-radius: 8px;
-            border: 2px solid #3D352E; width: 90%; max-width: 400px;
-        }
+        /* Debuff button styles removed */
+        /* Debuff list styles removed */
+        /* Modal styles removed */
         .btn-feedback { transition: background-color 0.2s ease-in-out; }
         #creation-form-container {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease-in-out;
+        }
+        .level-input-container label, .quantity-input-container label {
+             white-space: nowrap;
+        }
+         .level-input-container input, .quantity-input-container input {
+             width: 4rem; /* Adjust width as needed */
+        }
+         .notes-input {
+             font-size: 10px;
+             padding: 2px 4px;
+             background-color: #f3efe6; /* Slightly lighter than card */
+             border: 1px solid #c9c1b4;
+             border-radius: 3px;
+        }
+        /* Style for the oval color picker button */
+        .color-picker-button-oval {
+             height: 1rem; /* h-4 */
+             width: 4rem; /* w-16 - Made 4 times wider than height */
+             border-radius: 9999px; /* rounded-full */
+             border-width: 2px;
         }
     </style>
 </head>
@@ -76,7 +73,7 @@
     <div class="max-w-7xl mx-auto">
         <div class="bg-[#E0DACE] p-4 sm:p-6 rounded-lg border-2 border-[#3D352E] shadow-lg mb-8">
             <h1 class="font-playfair text-2xl sm:text-3xl font-bold text-[#3D352E] text-center mb-4">Тактический Гримуар</h1>
-            
+
             <form id="add-monster-form">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -91,11 +88,12 @@
                 </div>
 
                 <div id="creation-form-container">
+                    <!-- Форма создания/редактирования (остается без изменений) -->
                     <div id="creation-form" class="mt-4 pt-4 border-t-2 border-[#3D352E] space-y-4">
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                              <div><label class="block text-xs font-bold">Имя</label><input type="text" id="form-name" class="mt-1 w-full rounded border-[#3D352E] p-1 text-sm" required></div>
-                             <div><label class="block text-xs font-bold">Здоровье</label><input type="number" id="form-hp" class="mt-1 w-full rounded border-[#3D352E] p-1 text-sm" required></div>
-                             <div><label class="block text-xs font-bold">Уровень</label><input type="number" id="form-level" class="mt-1 w-full rounded border-[#3D352E] p-1 text-sm" required></div>
+                             <div><label class="block text-xs font-bold">Здоровье (баз.)</label><input type="number" id="form-hp" class="mt-1 w-full rounded border-[#3D352E] p-1 text-sm" required></div>
+                             <div><label class="block text-xs font-bold">Уровень (ред.)</label><input type="number" id="form-level" class="mt-1 w-full rounded border-[#3D352E] p-1 text-sm"></div>
                              <div><label class="block text-xs font-bold">Опыт</label><input type="number" id="form-xp" class="mt-1 w-full rounded border-[#3D352E] p-1 text-sm"></div>
                         </div>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -131,11 +129,17 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4 mt-4">
-                    <button type="submit" class="w-full bg-[#3D352E] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#5a4d41] transition-colors duration-300 shadow-md">Добавить в бой</button>
-                    <div class="flex items-center gap-2">
-                        <label for="quantity" class="text-sm font-bold text-[#3D352E] whitespace-nowrap">Кол-во:</label>
-                        <input type="number" id="quantity" value="1" min="1" class="w-16 rounded-md border-[#3D352E] shadow-sm text-center">
+                <div class="flex items-center justify-between gap-4 mt-4">
+                     <button type="submit" class="flex-1 bg-[#3D352E] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#5a4d41] transition-colors duration-300 shadow-md">Добавить в бой</button>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 level-input-container">
+                            <label for="monster-level-input" class="text-sm font-bold text-[#3D352E]">Уровень:</label>
+                            <input type="number" id="monster-level-input" value="1" min="1" max="14" class="rounded-md border-[#3D352E] shadow-sm text-center p-1">
+                        </div>
+                        <div class="flex items-center gap-2 quantity-input-container">
+                            <label for="quantity" class="text-sm font-bold text-[#3D352E]">Кол-во:</label>
+                            <input type="number" id="quantity" value="1" min="1" class="rounded-md border-[#3D352E] shadow-sm text-center p-1">
+                        </div>
                     </div>
                 </div>
             </form>
@@ -143,26 +147,8 @@
         <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-items-center"></div>
     </div>
 
-    <!-- Модальное окно и шаблоны -->
-    <div id="debuff-modal-overlay">
-        <div id="debuff-modal">
-             <h3 class="font-playfair text-lg font-bold text-center mb-4">Добавить эффект</h3>
-            <div class="space-y-4">
-                <div>
-                    <label for="debuff-select" class="block text-sm font-bold text-[#3D352E]">Выбрать из списка</label>
-                    <select id="debuff-select" class="mt-1 block w-full rounded-md border-[#3D352E] shadow-sm"></select>
-                    <button id="add-selected-debuff" class="btn-feedback w-full mt-2 bg-green-700 text-white text-sm font-bold py-1 px-2 rounded hover:bg-green-800">Добавить выбранный</button>
-                </div>
-                <div>
-                    <label for="custom-debuff" class="block text-sm font-bold text-[#3D352E]">Или добавить свой</label>
-                    <input type="text" id="custom-debuff" class="mt-1 block w-full rounded-md border-[#3D352E] shadow-sm" placeholder="Например: Горение (1d4)">
-                    <button id="add-custom-debuff" class="btn-feedback w-full mt-2 bg-green-700 text-white text-sm font-bold py-1 px-2 rounded hover:bg-green-800">Добавить свой</button>
-                </div>
-                <button id="close-debuff-modal" class="w-full mt-4 bg-[#3D352E] text-white font-bold py-2 px-4 rounded hover:bg-[#5a4d41]">Закрыть</button>
-            </div>
-        </div>
-    </div>
-    
+    <!-- Модальное окно и шаблоны (Debuff modal removed) -->
+
     <template id="attack-input-template">
         <div class="attack-input-row grid grid-cols-12 gap-2 items-center">
             <select class="form-attack-type col-span-3 rounded border-[#3D352E] p-1 text-xs">
@@ -194,15 +180,16 @@
                 <div class="flex items-center justify-between">
                     <h2 class="monster-name font-playfair font-bold text-sm text-[#3D352E] monster-name-style">Имя существа</h2>
                     <div class="flex items-center gap-2 relative">
-                        <button class="debuff-button">DEBUFF</button>
+                        <!-- Debuff button removed -->
                         <div class="color-picker-wrapper">
-                            <button class="color-picker-button w-5 h-5 border-2 border-[#3D352E] rounded-full bg-[#3D352E]"></button>
+                             <!-- Color picker button changed to oval -->
+                            <button class="color-picker-button-oval border-[#3D352E] bg-[#3D352E]"></button>
                             <div class="color-palette"></div>
                         </div>
                         <button class="delete-button font-bold text-2xl leading-none text-[#3D352E] hover:text-red-700">×</button>
                     </div>
                 </div>
-                <ul class="debuff-list hidden mt-1 text-xs space-y-1"></ul>
+                <!-- Debuff list removed -->
                 <div class="text-center">
                     <p class="hp-text font-bold text-[14px]"><span class="text-[#A02828] text-[13px]">❤️</span> <span class="current-hp">20</span> / <span class="max-hp">20</span></p>
                     <div class="health-bar-background bg-[#3D352E] rounded-full h-2 overflow-hidden mt-1">
@@ -215,30 +202,33 @@
                     <button class="damage-button flex items-center justify-center w-8 h-8 rounded bg-[#C53030] text-white font-bold text-lg shadow hover:bg-red-700">⚔️</button>
                 </div>
                 <div class="details-section flex flex-col gap-2 pt-2">
-                    <div class="text-center border-t border-b border-[#3D352E] py-1.5">
-                        <p class="text-xs font-bold">Защита:</p>
-                        <div class="grid grid-cols-3 gap-1 mt-1">
-                            <span class="defense-weapon font-bold text-xs">⚔️ 0</span>
-                            <span class="defense-arrow font-bold text-xs">🏹 0</span>
-                            <span class="defense-magic font-bold text-xs">✨ 0</span>
-                        </div>
-                        <p class="immunity-text font-bold text-xs mt-1">Иммунитет: -</p>
-                    </div>
-                    <div class="attacks-container"></div>
+                     <!-- Defense block removed -->
+                    <div class="attacks-container border-t border-[#3D352E] pt-1.5"></div>
                     <div>
                         <p class="initiative-text text-center text-xs font-bold">Инициатива: 0</p>
-                        <div class="grid grid-cols-2 gap-1 mt-1">
-                            <span class="speed-text text-center text-xs font-bold">Скорость: 0</span>
-                            <span class="leadership-text text-center text-xs font-bold">Лидерство: 0</span>
+                        <!-- Speed and Leadership removed -->
+                    </div>
+                    <!-- Notes Section Added -->
+                    <div class="notes-section border-t border-[#3D352E] pt-1.5 mt-1 space-y-1">
+                         <!-- "Заметки:" label removed -->
+                        <div class="grid grid-cols-3 gap-1">
+                             <input type="text" class="notes-input col-span-2" placeholder=""> <!-- Placeholder removed -->
+                             <input type="text" class="notes-input col-span-1" placeholder=""> <!-- Placeholder removed -->
+                        </div>
+                         <div class="grid grid-cols-3 gap-1">
+                             <input type="text" class="notes-input col-span-2" placeholder=""> <!-- Placeholder removed -->
+                             <input type="text" class="notes-input col-span-1" placeholder=""> <!-- Placeholder removed -->
+                        </div>
+                         <div class="grid grid-cols-3 gap-1">
+                             <input type="text" class="notes-input col-span-2" placeholder=""> <!-- Placeholder removed -->
+                             <input type="text" class="notes-input col-span-1" placeholder=""> <!-- Placeholder removed -->
+                        </div>
+                         <div class="grid grid-cols-3 gap-1">
+                             <input type="text" class="notes-input col-span-2" placeholder=""> <!-- Placeholder removed -->
+                             <input type="text" class="notes-input col-span-1" placeholder=""> <!-- Placeholder removed -->
                         </div>
                     </div>
-                    <button class="sub-details-toggle-button w-full text-xs font-bold text-center p-1 mt-1 bg-[#c9c1b4] rounded hover:bg-[#b9b1a4]">Показать ▼</button>
-                    <div class="sub-details-section hidden flex flex-col gap-2">
-                        <div class="stats-grid grid grid-cols-5 gap-1 text-center border-t border-[#3D352E] pt-1.5"></div>
-                        <div class="abilities-container border-t border-[#3D352E] pt-1.5">
-                            <h4 class="font-playfair text-sm font-bold text-[#C53030] text-center">Способности, навыки и магия</h4>
-                        </div>
-                    </div>
+                     <!-- Sub-details section removed -->
                 </div>
             </div>
         </div>
@@ -246,32 +236,38 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const bestiary = {
-                'Маленькая крыса': { name: 'Маленькая крыса', hp: 7, level: 1, defense: { weapon: 0, arrow: 1, magic: 0 }, speed: 35, leadership: 2, xp: 25, immunity: 'Болезни', stats: { str: 2, dex: 15, con: 12, int: 2, cha: 4 }, attacks: [{ type: 'лов', damage: '1d4', desc: 'ближний бой' }], abilities: [{ name: 'Писк паники (1/бой)', desc: 'Все существа в пределах 10 фт. делают Проверку Хар. (10) или получают помеху на след. атаку.' }] },
-                'Крыса': { name: 'Крыса', hp: 12, level: 1, defense: { weapon: 1, arrow: 1, magic: 0 }, speed: 30, leadership: 4, xp: 50, immunity: 'Болезни', stats: { str: 6, dex: 11, con: 12, int: 2, cha: 5 }, attacks: [{ type: 'лов', damage: '1d4', desc: 'ближний бой' }], abilities: [{ name: 'Прыжок из тени', desc: 'Если крыса была скрыта, она прыгает на 15 фт. и атакует с преимуществом.' }] },
-                'Молодой волк': { name: 'Молодой волк', hp: 13, level: 1, defense: { weapon: 2, arrow: 1, magic: 0 }, speed: 35, leadership: 5, xp: 75, immunity: '-', stats: { str: 12, dex: 15, con: 14, int: 3, cha: 6 }, attacks: [{ type: 'лов', damage: '1d4', desc: 'ближний бой' }], abilities: [{ name: 'Оскал', desc: 'Цель в пределах 5 фт. делает Проверку Харизмы (12) или получает помеху на следующую атаку.' }] },
-                'Волк': { name: 'Волк', hp: 18, level: 2, defense: { weapon: 1, arrow: 1, magic: 1 }, speed: 35, leadership: 7, xp: 125, immunity: 'Страх', stats: { str: 14, dex: 15, con: 15, int: 3, cha: 7 }, attacks: [{ type: 'лов', damage: '1d4', desc: 'ближний бой' }], abilities: [{ name: 'Звериный вой (1р/бой)', desc: 'Все дружественные волки в радиусе 60 фт. получают Преимущество на одну атаку.' }] },
-                'Слабый паук': { name: 'Слабый паук', hp: 9, level: 1, defense: { weapon: 1, arrow: 1, magic: 1 }, speed: 30, leadership: 6, xp: 50, immunity: 'Яд', stats: { str: 4, dex: 14, con: 10, int: 1, cha: 2 }, attacks: [{ type: 'лов', damage: '1d4', desc: 'ближний бой' }], abilities: [{ name: 'Паутинка (1/бой)', desc: 'Цель в пределах 30 фт. делает Проверку Ловкости (12) или становится опутанной.' }] },
-                'Паук': { name: 'Паук', hp: 20, level: 2, defense: { weapon: 1, arrow: 1, magic: 1 }, speed: 35, leadership: 7, xp: 150, immunity: 'Яд', stats: { str: 10, dex: 13, con: 12, int: 2, cha: 4 }, attacks: [{ type: 'лов', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Парализующий яд', desc: 'Проверка Вын. (9)— если провал, цель парализована до конца следующего хода.' }] },
-                'Ползун': { name: 'Ползун', hp: 14, level: 1, defense: { weapon: 1, arrow: 1, magic: 2 }, speed: 30, leadership: 8, xp: 65, immunity: 'Психическая магия', stats: { str: 8, dex: 14, con: 10, int: 1, cha: 1 }, attacks: [{ type: 'лов', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Шепот глубин (1р/бой)', desc: 'Цель в 30 фт. делает проверку Харизмы (12); при провале получает 1d4 магического (психика) урона и становится растерянной на 1 раунд.' }] },
-                'Плюющий Ползун': { name: 'Плюющий Ползун', hp: 14, level: 1, defense: { weapon: 1, arrow: 1, magic: 2 }, speed: 30, leadership: 8, xp: 65, immunity: 'Психическая магия', stats: { str: 8, dex: 14, con: 10, int: 1, cha: 1 }, attacks: [{ type: 'инт', damage: '1d6', desc: 'Магия (яд)' }], abilities: [{ name: 'Паралич', desc: 'Цель в 30 фт. делает проверку Вын. (10); при провале парализуется на 1 раунд.' }] },
-                'Адский Ползун': { name: 'Адский Ползун', hp: 20, level: 3, defense: { weapon: 1, arrow: 1, magic: 2 }, speed: 30, leadership: 8, xp: 400, immunity: 'Психическая магия', stats: { str: 8, dex: 14, con: 10, int: 1, cha: 1 }, attacks: [{ type: 'инт', damage: '1d8', desc: 'Магия (яд)' }], abilities: [{ name: 'Адский плевок (АОЕ)', desc: 'Наносит 1d4 урона всем целям в радиусе 30 футов.' }] },
-                'Скелет': { name: 'Скелет', hp: 28, level: 3, defense: { weapon: 3, arrow: 5, magic: 2 }, speed: 30, leadership: 0, xp: 350, immunity: 'Яд, Истощение', stats: { str: 12, dex: 16, con: 16, int: 6, cha: 5 }, attacks: [{ type: 'лов', damage: '1d8', desc: 'ближний бой' }], abilities: [{ name: 'Нежить', desc: 'Иммунитет к яду и истощению.' }] },
-                'Маг Скелет': { name: 'Маг Скелет', hp: 25, level: 3, defense: { weapon: 2, arrow: 2, magic: 5 }, speed: 30, leadership: 0, xp: 400, immunity: 'Яд, Истощение', stats: { str: 8, dex: 15, con: 15, int: 16, cha: 8 }, attacks: [{ type: 'инт', damage: '1d8', desc: 'Магия (холод)' }], abilities: [{ name: 'Ледяная стрела', desc: 'Цель должна совершить спасбросок Выносливости (13), иначе ее скорость передвижения уменьшается вдвое до конца ее следующего хода.' }] },
-                'Лорд Скелет': { name: 'Лорд Скелет', hp: 55, level: 4, defense: { weapon: 5, arrow: 5, magic: 4 }, speed: 30, leadership: 5, xp: 950, immunity: 'Яд, Истощение, Испуг', stats: { str: 18, dex: 14, con: 17, int: 10, cha: 14 }, attacks: [{ type: 'сил', damage: '1d12', desc: 'ближний бой' }], abilities: [{ name: 'Призыв нежити (1/бой)', desc: 'Призывает 1d4 обычных Скелетов на поле боя.' }, { name: 'Аура Страха', desc: 'Враги, начинающие ход в 10 футах от Лорда, должны совершить спасбросок Харизмы (12) или испугаться.' }] },
-                'Буллит': { name: 'Буллит', hp: 60, level: 4, defense: { weapon: 3, arrow: 3, magic: 3 }, speed: 30, leadership: 6, xp: 900, immunity: 'Испуг', stats: { str: 15, dex: 11, con: 14, int: 8, cha: 10 }, attacks: [{ type: 'сил', damage: '1d10', desc: 'ближний бой' }], abilities: [{ name: 'Пинок (1/бой)', desc: 'Проверка Силы 12 — цель отлетает на 10 фт.' }, { name: 'Злой авторитет (1/день)', desc: 'Персонажи ниже 3 уровня делают спасбросок Харизмы (10), при неудаче пропускают свой ход.' }, { name: 'Сарказм (в начале боя)', desc: 'Деморализует новичков (Мастер решает эффект).' }] },
-                'Горн': { name: 'Горн', hp: 50, level: 4, defense: { weapon: 5, arrow: 5, magic: 3 }, speed: 25, leadership: 3, xp: 1100, immunity: '-', stats: { str: 19, dex: 12, con: 18, int: 10, cha: 11 }, attacks: [{ type: 'сил', damage: '1d12', desc: 'ближний бой' }], abilities: [{ name: 'Плечо Друга', desc: 'Когда союзник в 5 футах от Горна становится целью атаки, Горн может использует реакцию, чтобы подставить свое плечо под удар. Он получает половину урона от этой атаки, а союзник — вторую половину.' }] },
-                'Диего': { name: 'Диего', hp: 70, level: 5, defense: { weapon: 3, arrow: 3, magic: 3 }, speed: 40, leadership: 4, xp: 1200, immunity: '-', stats: { str: 10, dex: 18, con: 16, int: 12, cha: 14 }, attacks: [{ type: 'лов', damage: '2d6', desc: 'ближний бой' }], abilities: [{ name: 'Мастер скрытности', desc: '+2d6 при скрытной атаке.' }, { name: 'Бонусное уклонение (1р/бой)', desc: 'Все противники совершают урон с помехой в течении 1 хода.' }, { name: 'Глаз на затылке', desc: 'Не застать врасплох (нельзя атаковать скрытно).' }] },
-                'Лестер': { name: 'Лестер', hp: 70, level: 5, defense: { weapon: 2, arrow: 2, magic: 5 }, speed: 30, leadership: 3, xp: 1200, immunity: '-', stats: { str: 10, dex: 10, con: 14, int: 15, cha: 13 }, attacks: [{ type: 'лов', damage: '1d10', desc: 'ближний бой' }], abilities: [{ name: 'Покой разума (1/день)', desc: 'Подавляет волю двух существ в пределах 30 фт. (Проверка Харизмы 13). На 2 хода они не могут совершать действий.' }, { name: 'Медитация Спящего (1/день)', desc: 'Исчезает из мира до начала своего следующего хода. Невозможно нацелиться, атаковать или обнаружить.' }] },
-                'Рудокоп': { name: 'Рудокоп', hp: 13, level: 1, defense: { weapon: 1, arrow: 1, magic: 0 }, speed: 25, leadership: 0, xp: 50, immunity: '-', stats: { str: 10, dex: 11, con: 12, int: 8, cha: 9 }, attacks: [{ type: 'сил', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Сдержанная паника', desc: 'При Здоровье 3 или меньше получает преимущество на спасброски.' }] },
-                'Фанатичный Рудокоп': { name: 'Фанатичный Рудокоп', hp: 14, level: 1, defense: { weapon: 1, arrow: 1, magic: 0 }, speed: 15, leadership: 0, xp: 50, immunity: '-', stats: { str: 13, dex: 11, con: 12, int: 5, cha: 9 }, attacks: [{ type: 'сил', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Яростный Удар Кирки (1/бой)', desc: 'Фанатичный Рудокоп яростно бьёт киркой, нанося 1d6 урона. Цель проходит проверку Выносливости (10) или ошеломлена до конца своего хода.' }] },
-                'Бандит': { name: 'Бандит', hp: 20, level: 2, defense: { weapon: 1, arrow: 2, magic: 0 }, speed: 30, leadership: 1, xp: 85, immunity: '-', stats: { str: 12, dex: 14, con: 12, int: 10, cha: 11 }, attacks: [{ type: 'сил', damage: '1d6', desc: 'ближний бой' }, { type: 'лов', damage: '1d8', desc: 'дальний бой' }], abilities: [{ name: 'Удар исподтишка', desc: '+1d8 урона, если цель занята боем с союзником.' }] },
-                'Стражник': { name: 'Стражник', hp: 28, level: 3, defense: { weapon: 3, arrow: 3, magic: 2 }, speed: 30, leadership: 2, xp: 350, immunity: 'Испуг', stats: { str: 16, dex: 12, con: 14, int: 10, cha: 10 }, attacks: [{ type: 'сил', damage: '1d8', desc: 'ближний бой' }], abilities: [{ name: 'Приказ начальства (1/день)', desc: 'Даёт приказ союзнику провести одну бонусную атаку в его ход.' }] },
-                'Страж Братства': { name: 'Страж Братства', hp: 28, level: 3, defense: { weapon: 3, arrow: 3, magic: 2 }, speed: 30, leadership: 3, xp: 350, immunity: '-', stats: { str: 13, dex: 12, con: 14, int: 11, cha: 13 }, attacks: [{ type: 'сил', damage: '1d8', desc: 'ближний бой' }], abilities: [{ name: 'Сила Спящего (1р/день)', desc: 'Накладывает Команду на цель в радиусе 30 футов с проверкой Харизмы (12), определяемой по усмотрению мастера.' }] },
-                'Наёмник': { name: 'Наёмник', hp: 28, level: 3, defense: { weapon: 3, arrow: 3, magic: 2 }, speed: 30, leadership: 1, xp: 350, immunity: '-', stats: { str: 16, dex: 12, con: 14, int: 10, cha: 9 }, attacks: [{ type: 'сил', damage: '1d8', desc: 'ближний бой' }], abilities: [{ name: 'Стальной натиск (1/день)', desc: 'Если не двигался, атакует с преимуществом.' }] },
-                'Головорез': { name: 'Головорез', hp: 10, level: 1, defense: { weapon: 1, arrow: 1, magic: 0 }, speed: 30, leadership: 2, xp: 50, immunity: '-', stats: { str: 12, dex: 13, con: 12, int: 8, cha: 10 }, attacks: [{ type: 'лов', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Угроза в лицо (1/день)', desc: 'Проверка Харизмы 11: цель получает помеху на атаки до конца следующего хода.' }, { name: 'Милость к раненому', desc: 'добавляет +1d4 к урону, если у цели менее половины жизни.' }] }
+            // Таблица характеристик по уровням
+            const levelStatsTable = {
+                1: { hp: 8, damage: '1d6' },
+                2: { hp: 14, damage: '1d8' },
+                3: { hp: 20, damage: '2d6' },
+                4: { hp: 26, damage: '2d8' },
+                5: { hp: 32, damage: '2d10' },
+                6: { hp: 38, damage: '3d8' },
+                7: { hp: 44, damage: '3d8' },
+                8: { hp: 50, damage: '3d10' },
+                9: { hp: 56, damage: '3d10' },
+                10: { hp: 62, damage: '3d12' },
+                11: { hp: 68, damage: '3d12' },
+                12: { hp: 74, damage: '4d10' },
+                13: { hp: 80, damage: '4d12' },
+                14: { hp: 86, damage: '5d10' }
             };
-            const predefinedDebuffs = ['Ослабление', 'Замедление', 'Отравление', 'Горение', 'Страх', 'Паралич', 'Ошеломление', 'Преимущество', 'Помеха'];
+
+            const bestiary = { // Убраны level из монстров
+                'Крыса': { name: 'Крыса', hp: 12, defense: { weapon: 1, arrow: 1, magic: 0 }, speed: 30, leadership: 4, xp: 50, immunity: 'Болезни', stats: { str: 6, dex: 11, con: 12, int: 2, cha: 5 }, attacks: [{ type: 'лов', damage: '1d4', desc: 'ближний бой' }], abilities: [{ name: 'Прыжок из тени', desc: 'Если крыса была скрыта, она прыгает на 15 фт. и атакует с преимуществом.' }] },
+                'Волк': { name: 'Волк', hp: 18, defense: { weapon: 1, arrow: 1, magic: 1 }, speed: 35, leadership: 7, xp: 125, immunity: 'Страх', stats: { str: 14, dex: 15, con: 15, int: 3, cha: 7 }, attacks: [{ type: 'лов', damage: '1d4', desc: 'ближний бой' }], abilities: [{ name: 'Звериный вой (1р/бой)', desc: 'Все дружественные волки в радиусе 60 фт. получают Преимущество на одну атаку.' }] },
+                'Варг': { name: 'Варг', hp: 30, defense: { weapon: 2, arrow: 2, magic: 1 }, speed: 40, leadership: 5, xp: 300, immunity: 'Страх', stats: { str: 16, dex: 15, con: 16, int: 3, cha: 7 }, attacks: [{ type: 'сил', damage: '1d8', desc: 'ближний бой' }], abilities: [{ name: 'Свирепость', desc: 'Если Варг получает урон, он получает преимущество на следующую атаку.' }] },
+                'Паук': { name: 'Паук', hp: 20, defense: { weapon: 1, arrow: 1, magic: 1 }, speed: 35, leadership: 7, xp: 150, immunity: 'Яд', stats: { str: 10, dex: 13, con: 12, int: 2, cha: 4 }, attacks: [{ type: 'лов', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Парализующий яд', desc: 'Проверка Вын. (9)— если провал, цель парализована до конца следующего хода.' }] },
+                'Ползун': { name: 'Ползун', hp: 14, defense: { weapon: 1, arrow: 1, magic: 2 }, speed: 30, leadership: 8, xp: 65, immunity: 'Психическая магия', stats: { str: 8, dex: 14, con: 10, int: 1, cha: 1 }, attacks: [{ type: 'лов', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Шепот глубин (1р/бой)', desc: 'Цель в 30 фт. делает проверку Харизмы (12); при провале получает 1d4 магического (психика) урона и становится растерянной на 1 раунд.' }] },
+                'Орк': { name: 'Орк', hp: 25, defense: { weapon: 2, arrow: 1, magic: 0 }, speed: 30, leadership: 2, xp: 150, immunity: '-', stats: { str: 16, dex: 10, con: 16, int: 7, cha: 8 }, attacks: [{ type: 'сил', damage: '1d8', desc: 'ближний бой' }], abilities: [{ name: 'Ярость (1/бой)', desc: 'Когда ХП ниже 50%, наносит +1d4 урона.' }] },
+                'Орк-воин': { name: 'Орк-воин', hp: 40, defense: { weapon: 4, arrow: 2, magic: 1 }, speed: 30, leadership: 3, xp: 400, immunity: 'Испуг', stats: { str: 18, dex: 12, con: 17, int: 8, cha: 9 }, attacks: [{ type: 'сил', damage: '1d10', desc: 'ближний бой' }], abilities: [{ name: 'Устрашающий вид', desc: 'При первой атаке цель должна пройти проверку Хар (10) или испугаться.' }] },
+                'Орк-шаман': { name: 'Орк-шаман', hp: 30, defense: { weapon: 1, arrow: 1, magic: 3 }, speed: 30, leadership: 4, xp: 400, immunity: '-', stats: { str: 12, dex: 10, con: 15, int: 16, cha: 12 }, attacks: [{ type: 'инт', damage: '1d8', desc: 'Магия (огонь)' }], abilities: [{ name: 'Лечение (1/бой)', desc: 'Восстанавливает 1d8 ХП себе или союзному орку.' }, { name: 'Огненный шар', desc: 'Дальняя магическая атака.' }] },
+                'Скелет': { name: 'Скелет', hp: 28, defense: { weapon: 3, arrow: 5, magic: 2 }, speed: 30, leadership: 0, xp: 350, immunity: 'Яд, Истощение', stats: { str: 12, dex: 16, con: 16, int: 6, cha: 5 }, attacks: [{ type: 'лов', damage: '1d8', desc: 'ближний бой' }], abilities: [{ name: 'Нежить', desc: 'Иммунитет к яду и истощению.' }] },
+                'Маг Скелет': { name: 'Маг Скелет', hp: 25, defense: { weapon: 2, arrow: 2, magic: 5 }, speed: 30, leadership: 0, xp: 400, immunity: 'Яд, Истощение', stats: { str: 8, dex: 15, con: 15, int: 16, cha: 8 }, attacks: [{ type: 'инт', damage: '1d8', desc: 'Магия (холод)' }], abilities: [{ name: 'Ледяная стрела', desc: 'Цель должна совершить спасбросок Выносливости (13), иначе ее скорость передвижения уменьшается вдвое до конца ее следующего хода.' }] },
+                'Человек': { name: 'Человек', hp: 13, defense: { weapon: 1, arrow: 1, magic: 0 }, speed: 25, leadership: 0, xp: 50, immunity: '-', stats: { str: 10, dex: 11, con: 12, int: 8, cha: 9 }, attacks: [{ type: 'сил', damage: '1d6', desc: 'ближний бой' }], abilities: [{ name: 'Сдержанная паника', desc: 'При Здоровье 3 или меньше получает преимущество на спасброски.' }] }
+            };
+             // Predefined debuffs removed
             const colorPalette = { 'Красный': '#C53030', 'Синий': '#3B82F6', 'Зеленый': '#10B981', 'Желтый': '#F59E0B', 'Черный': '#1F2937', 'Серый': '#6B7280', 'Белый': '#F9FAFB' };
             const attackTypeMap = { 'лов': 'Ловкость', 'сил': 'Сила', 'инт': 'Интеллект' };
 
@@ -279,42 +275,39 @@
             const form = document.getElementById('add-monster-form');
             const monsterSelect = document.getElementById('monster-select');
             const quantityInput = document.getElementById('quantity');
+            const monsterLevelInput = document.getElementById('monster-level-input');
             const toggleCreationFormBtn = document.getElementById('toggle-creation-form');
             const creationFormContainer = document.getElementById('creation-form-container');
 
             // Card Elements
             const cardsContainer = document.getElementById('cards-container');
             const cardTemplate = document.getElementById('card-template');
-            
-            // Modal Elements
-            const debuffModalOverlay = document.getElementById('debuff-modal-overlay');
-            const debuffSelect = document.getElementById('debuff-select');
-            const customDebuffInput = document.getElementById('custom-debuff');
-            let activeCardForDebuff = null;
-            
+
+            // Modal Elements removed
+
             // Templates for dynamic inputs
             const attackInputTemplate = document.getElementById('attack-input-template');
             const abilityInputTemplate = document.getElementById('ability-input-template');
 
             const calculateModifier = (stat) => Math.floor((stat - 10) / 2);
-            const calculateInitiative = (stats, leadership) => calculateModifier(stats.dex) + calculateModifier(stats.cha) + leadership;
+            const calculateBaseInitiative = (stats, leadership) => {
+                 const dexMod = stats && stats.dex ? calculateModifier(stats.dex) : 0;
+                 const chaMod = stats && stats.cha ? calculateModifier(stats.cha) : 0;
+                 const lead = typeof leadership === 'number' ? leadership : 0;
+                 return dexMod + chaMod + lead;
+            };
 
             function populateBestiarySelect() {
-                Object.values(bestiary).sort((a, b) => a.level - b.level || a.name.localeCompare(b.name)).forEach(monster => {
+                Object.values(bestiary).sort((a, b) => a.name.localeCompare(b.name)).forEach(monster => {
                     const option = document.createElement('option');
                     option.value = monster.name;
-                    option.textContent = `${monster.name} (Ур. ${monster.level})`;
+                    option.textContent = monster.name;
                     monsterSelect.appendChild(option);
                 });
             }
             populateBestiarySelect();
-            
-            predefinedDebuffs.forEach(debuff => {
-                const option = document.createElement('option');
-                option.value = debuff;
-                option.textContent = debuff;
-                debuffSelect.appendChild(option);
-            });
+
+            // Predefined debuffs population removed
 
             const addAttackInput = (attack = { type: 'сил', damage: '', desc: '' }) => {
                 const container = document.getElementById('attacks-input-container');
@@ -337,7 +330,7 @@
 
             document.getElementById('add-attack-btn').addEventListener('click', () => addAttackInput());
             document.getElementById('add-ability-btn').addEventListener('click', () => addAbilityInput());
-            
+
             const clearCreationForm = () => {
                 document.getElementById('form-name').value = '';
                 document.getElementById('form-hp').value = '';
@@ -352,14 +345,14 @@
                 ['str', 'dex', 'con', 'int', 'cha'].forEach(stat => document.getElementById(`form-stat-${stat}`).value = '10');
                 document.getElementById('attacks-input-container').innerHTML = '';
                 document.getElementById('abilities-input-container').innerHTML = '';
-                addAttackInput();
+                addAttackInput({ type: 'сил', damage: '', desc: '' });
                 for (let i = 0; i < 4; i++) { addAbilityInput(); }
             };
-            
+
             const populateCreationForm = (monsterData) => {
                 document.getElementById('form-name').value = monsterData.name || '';
                 document.getElementById('form-hp').value = monsterData.hp || '';
-                document.getElementById('form-level').value = monsterData.level || '1';
+                document.getElementById('form-level').value = '';
                 document.getElementById('form-xp').value = monsterData.xp || '0';
                 document.getElementById('form-def-weapon').value = monsterData.defense?.weapon || '0';
                 document.getElementById('form-def-arrow').value = monsterData.defense?.arrow || '0';
@@ -368,11 +361,21 @@
                 document.getElementById('form-speed').value = monsterData.speed || '30';
                 document.getElementById('form-leadership').value = monsterData.leadership || '0';
                 Object.entries(monsterData.stats || {}).forEach(([key, value]) => {
-                    document.getElementById(`form-stat-${key}`).value = value;
+                     const inputElement = document.getElementById(`form-stat-${key}`);
+                     if (inputElement) {
+                        inputElement.value = value;
+                     }
                 });
                 document.getElementById('attacks-input-container').innerHTML = '';
-                (monsterData.attacks || []).forEach(addAttackInput);
-                
+                (monsterData.attacks || []).forEach((attack, index) => {
+                     const damageValue = index === 0 ? '' : attack.damage;
+                     addAttackInput({ ...attack, damage: damageValue });
+                });
+                 if (!monsterData.attacks || monsterData.attacks.length === 0) {
+                     addAttackInput();
+                 }
+
+
                 document.getElementById('abilities-input-container').innerHTML = '';
                 const existingAbilities = monsterData.abilities || [];
                 existingAbilities.forEach(addAbilityInput);
@@ -388,12 +391,14 @@
                 const selectedName = e.target.value;
                 if (!selectedName) {
                     clearCreationForm();
+                    monsterLevelInput.value = 1;
                     return;
                 }
                 const monsterData = bestiary[selectedName];
                 if (monsterData) {
                     populateCreationForm(monsterData);
                 }
+                 monsterLevelInput.value = 1;
             });
 
             toggleCreationFormBtn.addEventListener('click', () => {
@@ -408,102 +413,62 @@
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const monsterData = {
-                    name: document.getElementById('form-name').value,
-                    hp: parseInt(document.getElementById('form-hp').value) || 10,
-                    level: parseInt(document.getElementById('form-level').value) || 1,
-                    xp: parseInt(document.getElementById('form-xp').value) || 0,
-                    defense: {
-                        weapon: parseInt(document.getElementById('form-def-weapon').value) || 0,
-                        arrow: parseInt(document.getElementById('form-def-arrow').value) || 0,
-                        magic: parseInt(document.getElementById('form-def-magic').value) || 0,
-                    },
-                    immunity: document.getElementById('form-immunity').value || '-',
-                    speed: parseInt(document.getElementById('form-speed').value) || 30,
-                    leadership: parseInt(document.getElementById('form-leadership').value) || 0,
-                    stats: {
-                        str: parseInt(document.getElementById('form-stat-str').value) || 10,
-                        dex: parseInt(document.getElementById('form-stat-dex').value) || 10,
-                        con: parseInt(document.getElementById('form-stat-con').value) || 10,
-                        int: parseInt(document.getElementById('form-stat-int').value) || 10,
-                        cha: parseInt(document.getElementById('form-stat-cha').value) || 10,
-                    },
-                    attacks: Array.from(document.querySelectorAll('.attack-input-row')).map(row => ({
-                        type: row.querySelector('.form-attack-type').value,
-                        damage: row.querySelector('.form-attack-damage').value,
-                        desc: row.querySelector('.form-attack-desc').value,
-                    })),
-                    abilities: Array.from(document.querySelectorAll('.ability-input-row')).map(row => ({
-                        name: row.querySelector('.form-ability-name').value,
-                        desc: row.querySelector('.form-ability-desc').value,
-                    })),
-                };
+                const selectedLevel = parseInt(monsterLevelInput.value) || 1;
+                const levelStats = levelStatsTable[selectedLevel] || levelStatsTable[1];
+                let monsterData;
+
+                if (monsterSelect.value) {
+                    monsterData = JSON.parse(JSON.stringify(bestiary[monsterSelect.value]));
+                    monsterData.hp = levelStats.hp;
+                    if (monsterData.attacks && monsterData.attacks.length > 0) {
+                        monsterData.attacks[0].damage = levelStats.damage;
+                    } else {
+                         monsterData.attacks = [{ type: 'сил', damage: levelStats.damage, desc: 'ближний бой' }];
+                    }
+                } else {
+                     monsterData = {
+                         name: document.getElementById('form-name').value || 'Безымянный',
+                         hp: levelStats.hp,
+                         xp: parseInt(document.getElementById('form-xp').value) || 0,
+                         defense: {
+                             weapon: parseInt(document.getElementById('form-def-weapon').value) || 0,
+                             arrow: parseInt(document.getElementById('form-def-arrow').value) || 0,
+                             magic: parseInt(document.getElementById('form-def-magic').value) || 0,
+                         },
+                         immunity: document.getElementById('form-immunity').value || '-',
+                         speed: parseInt(document.getElementById('form-speed').value) || 30,
+                         leadership: parseInt(document.getElementById('form-leadership').value) || 0,
+                         stats: {
+                             str: parseInt(document.getElementById('form-stat-str').value) || 10,
+                             dex: parseInt(document.getElementById('form-stat-dex').value) || 10,
+                             con: parseInt(document.getElementById('form-stat-con').value) || 10,
+                             int: parseInt(document.getElementById('form-stat-int').value) || 10,
+                             cha: parseInt(document.getElementById('form-stat-cha').value) || 10,
+                         },
+                         attacks: Array.from(document.querySelectorAll('.attack-input-row')).map((row, index) => ({
+                             type: row.querySelector('.form-attack-type').value,
+                             damage: index === 0 ? levelStats.damage : row.querySelector('.form-attack-damage').value,
+                             desc: row.querySelector('.form-attack-desc').value,
+                         })),
+                         abilities: Array.from(document.querySelectorAll('.ability-input-row')).map(row => ({
+                             name: row.querySelector('.form-ability-name').value,
+                             desc: row.querySelector('.form-ability-desc').value,
+                         })).filter(ability => ability.name || ability.desc),
+                     };
+                     if (monsterData.attacks.length === 0) {
+                         monsterData.attacks.push({ type: 'сил', damage: levelStats.damage, desc: 'ближний бой' });
+                     }
+                }
 
                 const quantity = parseInt(quantityInput.value) || 1;
                 for (let i = 0; i < quantity; i++) {
                     addCard(monsterData);
                 }
             });
-            
-            // --- MODAL AND CARD LOGIC (mostly unchanged) ---
-            
-            function showButtonFeedback(button) {
-                const originalText = button.textContent;
-                button.textContent = 'Добавлено!';
-                button.classList.remove('bg-green-700');
-                button.classList.add('bg-blue-500');
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('bg-blue-500');
-                    button.classList.add('bg-green-700');
-                }, 1000);
-            }
 
-            function openDebuffModal(card) {
-                activeCardForDebuff = card;
-                debuffModalOverlay.style.display = 'flex';
-            }
-            function closeDebuffModal() {
-                activeCardForDebuff = null;
-                customDebuffInput.value = '';
-                debuffModalOverlay.style.display = 'none';
-            }
-            document.getElementById('add-selected-debuff').addEventListener('click', (e) => {
-                if (activeCardForDebuff && debuffSelect.value) {
-                    addDebuffToCard(activeCardForDebuff, debuffSelect.value);
-                    showButtonFeedback(e.target);
-                }
-            });
-            document.getElementById('add-custom-debuff').addEventListener('click', (e) => {
-                if (activeCardForDebuff && customDebuffInput.value.trim()) {
-                    addDebuffToCard(activeCardForDebuff, customDebuffInput.value.trim());
-                    showButtonFeedback(e.target);
-                    customDebuffInput.value = '';
-                }
-            });
-            document.getElementById('close-debuff-modal').addEventListener('click', closeDebuffModal);
-            debuffModalOverlay.addEventListener('click', (e) => { if (e.target === debuffModalOverlay) closeDebuffModal(); });
+            // --- MODAL AND CARD LOGIC ---
 
-            function addDebuffToCard(card, debuffText) {
-                const debuffList = card.querySelector('.debuff-list');
-                const debuffButton = card.querySelector('.debuff-button');
-                const li = document.createElement('li');
-                li.className = 'flex justify-between items-center bg-red-200 px-2 py-1 rounded';
-                li.textContent = debuffText;
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = '×';
-                removeBtn.className = 'font-bold ml-2 text-red-700';
-                removeBtn.onclick = () => {
-                    li.remove();
-                    if (debuffList.children.length === 0) {
-                        debuffButton.classList.remove('active');
-                        debuffList.classList.add('hidden');
-                    }
-                };
-                li.appendChild(removeBtn);
-                debuffList.appendChild(li);
-                debuffButton.classList.add('active');
-            }
+            // Debuff related functions removed
 
             function addCard(monsterData) {
                 const cardClone = cardTemplate.content.cloneNode(true);
@@ -515,55 +480,41 @@
                 newCard.querySelector('.max-hp').textContent = monsterData.hp;
                 newCard.dataset.maxHp = monsterData.hp;
                 newCard.dataset.currentHp = monsterData.hp;
-                
-                newCard.querySelector('.xp-value-defeated').textContent = `${monsterData.xp || 0} XP`;
-                newCard.querySelector('.defense-weapon').textContent = `⚔️ ${monsterData.defense.weapon}`;
-                newCard.querySelector('.defense-arrow').textContent = `🏹 ${monsterData.defense.arrow}`;
-                newCard.querySelector('.defense-magic').textContent = `✨ ${monsterData.defense.magic}`;
-                newCard.querySelector('.immunity-text').textContent = `Иммунитет: ${monsterData.immunity || '-'}`;
-                newCard.querySelector('.speed-text').textContent = `Скорость: ${monsterData.speed || 0}`;
-                newCard.querySelector('.leadership-text').textContent = `Лидерство: ${monsterData.leadership || 0}`;
-                newCard.querySelector('.initiative-text').textContent = `Инициатива: ${calculateInitiative(monsterData.stats, monsterData.leadership)}`;
 
-                const statsGrid = newCard.querySelector('.stats-grid');
-                statsGrid.innerHTML = '';
-                const statNames = { str: 'СИЛ', dex: 'ЛОВ', con: 'ВЫН', int: 'ИНТ', cha: 'ХАР' };
-                Object.entries(statNames).forEach(([key, displayName]) => {
-                    const value = monsterData.stats[key] || 10;
-                    const modifier = calculateModifier(value);
-                    statsGrid.insertAdjacentHTML('beforeend', `<div><p class="text-[10px] font-bold">${displayName}</p><p class="font-lora text-xs font-bold">${value}</p><p class="text-xs font-bold text-[#C53030]">${modifier >= 0 ? '+' : ''}${modifier}</p></div>`);
-                });
+                newCard.querySelector('.xp-value-defeated').textContent = `${monsterData.xp || 0} XP`;
+
+                 // Рассчитываем базовую инициативу
+                 const baseInitiative = calculateBaseInitiative(monsterData.stats, monsterData.leadership);
+                 // Добавляем случайный модификатор от -3 до +3
+                 const initiativeModifier = Math.floor(Math.random() * 7) - 3;
+                 const finalInitiative = baseInitiative + initiativeModifier;
+
+                 const initiativeTextElement = newCard.querySelector('.initiative-text');
+                 if (initiativeTextElement) {
+                    initiativeTextElement.textContent = `Инициатива: ${finalInitiative}`; // Отображаем случайное значение
+                 }
 
                 const attacksContainer = newCard.querySelector('.attacks-container');
                 attacksContainer.innerHTML = '';
-                monsterData.attacks.forEach(attack => {
-                    const attackTypeName = attackTypeMap[attack.type] || attack.type.toUpperCase();
-                    let descClass = '';
-                    if (attack.desc.includes('дальний')) { descClass = 'text-green-800 font-semibold'; }
-                    else if (attack.desc.includes('Магия')) { descClass = 'text-blue-800 font-semibold'; }
-                    attacksContainer.insertAdjacentHTML('beforeend', `<div class="mt-1"><p class="text-center text-xs font-bold">⚔️ Атака (${attackTypeName})</p><div class="flex gap-1"><span class="flex-1 text-center bg-stone-200 rounded p-0.5 text-xs font-bold">${attack.damage}</span><span class="flex-[2] text-center bg-stone-200 rounded p-0.5 text-[11px] ${descClass}">${attack.desc}</span></div></div>`);
-                });
+                if(monsterData.attacks && monsterData.attacks.length > 0) {
+                    monsterData.attacks.forEach(attack => {
+                        const attackTypeName = attackTypeMap[attack.type] || attack.type.toUpperCase();
+                        let descClass = '';
+                        if (attack.desc.includes('дальний')) { descClass = 'text-green-800 font-semibold'; }
+                        else if (attack.desc.includes('Магия')) { descClass = 'text-blue-800 font-semibold'; }
+                        attacksContainer.insertAdjacentHTML('beforeend', `<div class="mt-1"><p class="text-center text-xs font-bold">⚔️ Атака (${attackTypeName})</p><div class="flex gap-1"><span class="flex-1 text-center bg-stone-200 rounded p-0.5 text-xs font-bold">${attack.damage}</span><span class="flex-[2] text-center bg-stone-200 rounded p-0.5 text-[11px] ${descClass}">${attack.desc}</span></div></div>`);
+                    });
+                } else {
+                     attacksContainer.insertAdjacentHTML('beforeend', `<p class="text-xs italic text-center text-gray-500">Нет атак</p>`);
+                }
 
-                const abilitiesContainer = newCard.querySelector('.abilities-container');
-                monsterData.abilities.forEach(ability => {
-                    if(ability.name || ability.desc) {
-                        abilitiesContainer.insertAdjacentHTML('beforeend', `<div class="bg-stone-200 rounded p-2 text-xs mt-1 text-center"><strong>${ability.name}:</strong> ${ability.desc}</div>`);
-                    }
-                });
-
-                monsterNameEl.addEventListener('click', () => openDebuffModal(newCard));
-                newCard.querySelector('.debuff-button').addEventListener('click', (e) => {
-                    const debuffList = newCard.querySelector('.debuff-list');
-                    if (debuffList.children.length > 0) {
-                        debuffList.classList.toggle('hidden');
-                    }
-                });
+                // Debuff button event listener removed
 
                 newCard.querySelector('.delete-button').addEventListener('click', () => {
                     newCard.style.transform = 'scale(0.9)'; newCard.style.opacity = '0';
                     setTimeout(() => newCard.remove(), 300);
                 });
-                
+
                 newCard.querySelector('.defeated-overlay').addEventListener('click', () => {
                      newCard.style.transform = 'scale(0.9)'; newCard.style.opacity = '0';
                     setTimeout(() => newCard.remove(), 300);
@@ -571,8 +522,8 @@
 
                 newCard.querySelector('.damage-button').addEventListener('click', () => handleHealthChange(newCard, false));
                 newCard.querySelector('.heal-button').addEventListener('click', () => handleHealthChange(newCard, true));
-                
-                const colorPickerButton = newCard.querySelector('.color-picker-button');
+
+                const colorPickerButton = newCard.querySelector('.color-picker-button-oval');
                 const paletteContainer = newCard.querySelector('.color-palette');
                 Object.entries(colorPalette).forEach(([name, color]) => {
                     const swatch = document.createElement('div');
@@ -588,15 +539,9 @@
                     });
                     paletteContainer.appendChild(swatch);
                 });
-                colorPickerButton.addEventListener('click', () => {
-                    paletteContainer.style.display = paletteContainer.style.display === 'grid' ? 'none' : 'grid';
-                });
-
-                newCard.querySelector('.sub-details-toggle-button').addEventListener('click', (e) => {
-                    const subDetails = newCard.querySelector('.sub-details-section');
-                    const isHidden = subDetails.classList.toggle('hidden');
-                    e.target.textContent = isHidden ? 'Показать ▼' : 'Скрыть ▲';
-                });
+                 colorPickerButton.addEventListener('click', () => {
+                     paletteContainer.style.display = paletteContainer.style.display === 'grid' ? 'none' : 'grid';
+                 });
 
                 cardsContainer.appendChild(newCard);
             }
@@ -615,10 +560,10 @@
             function updateHealthUI(card, currentHp) {
                 const maxHp = parseInt(card.dataset.maxHp);
                 card.querySelector('.current-hp').textContent = currentHp;
-                
+
                 const rawPercentage = (currentHp / maxHp) * 100;
                 const displayPercentage = Math.min(100, rawPercentage);
-                
+
                 const healthBar = card.querySelector('.health-bar-fill');
                 healthBar.style.width = `${displayPercentage > 0 ? displayPercentage : 0}%`;
 
@@ -627,7 +572,7 @@
                 } else {
                     healthBar.style.backgroundColor = '#4CAF50';
                 }
-                
+
                 const defeatedOverlay = card.querySelector('.defeated-overlay');
                 if (currentHp <= 0) {
                     card.classList.add('defeated');
@@ -637,7 +582,7 @@
                     defeatedOverlay.style.display = 'none';
                 }
             }
-            
+
             // Initialize form on load
             clearCreationForm();
         });
